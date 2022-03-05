@@ -46,9 +46,72 @@ var saveTasks = function() {
 };
 
 $(".list-group").on("click","p", function() {
-  console.log("<p> was clicked");
+  var text = $(this)
+    .text()
+    .trim();
+  
+  var textInput = $("<textarea>")
+    .addClass("form-control")
+    .val(text);
+  
+  $(this).replaceWith(textInput);
+  textInput.trigger("focus");
+  
+  console.log(text);
+  console.log(textInput);
 });
 
+$(".list-group").on("blur","textarea", function() {
+  // get the textarea's current value/text
+  var text = $(this)
+    .val()
+    .trim();
+
+  // get the parent ul's id attributes
+  var status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+
+  // get the task's position in the list of other li elements
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
+
+  // resulting text -> task (obj), [status] array todo, [index] obj in given index, .text return text property
+  tasks[status][index].text = text; 
+
+  // update the local storage tasks with the new edits
+  saveTasks(); 
+
+  // recreate the p element
+  var taskP = $("<p>")
+    .addClass("m-1")
+    .text(text);
+
+  // replace textarea with p element
+  $(this).replaceWith(taskP);
+});
+
+// due date was clicked
+$(".list-group").on("click","span", function() {
+  //get current text
+  var date = $(this)
+    .text()
+    .trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type","text")
+    .addClass("form-control")
+    .val(date);
+  
+  // swap out elements
+  $(this).replaceWith(dateInput);
+
+  // auto focus on new elements
+  dateInput.trigger("focus");
+});
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
